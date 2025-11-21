@@ -1,0 +1,15 @@
+[submodule "third_party/llama.cpp"]
+	path = third_party/llama.cpp
+	url = https://github.com/kipepeo-ai/llama.cpp.git
+[submodule "third_party/rav1e"]
+	path = third_party/rav1e
+	url = https://github.com/kipepeo-ai/rav1e.git
+[submodule "third_party/rav1d"]
+	path = third_party/rav1d
+	url = https://github.com/kipepeo-ai/rav1d.git
+[submodule "third_party/dav1d"]
+	path = third_party/dav1d
+	url = https://github.com/kipepeo-ai/dav1d.git
+[submodule "third_party/whisper.cpp"]
+	path = third_party/whisper.cpp
+	url = https://github.com/kipepeo-ai/whisper.cpp.git

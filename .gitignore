@@ -38,11 +38,8 @@ Makefile
 *~
 .DS_Store
 
-# Third-party dependencies (will be added as submodules)
-third_party/llama.cpp/
-third_party/rav1e/
-third_party/dav1d/
-third_party/whisper.cpp/
+# Third-party dependencies are now git submodules
+# They should be tracked, so don't ignore them
 
 # Python
 __pycache__/

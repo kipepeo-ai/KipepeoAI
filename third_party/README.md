@@ -23,13 +23,26 @@ This directory contains external dependencies that will be integrated into Kipep
   - Skin-tone optimization
   - Real-time encoding on MediaTek G99
 
-### dav1d
-- **Purpose**: AV1 decoder
-- **Status**: To be forked and integrated
-- **Fork Location**: https://github.com/videolan/dav1d
+### rav1d
+- **Purpose**: AV1 decoder (Rust port of dav1d)
+- **Status**: Cloned and ready for integration
+- **Fork Location**: https://github.com/kipepeo-ai/rav1d
 - **Integration Notes**:
+  - Rust port of dav1d with C API compatibility
   - Fast AV1 decoding for mobile devices
   - Optimized for low-end Android phones
+  - Drop-in replacement for libdav1d
+
+### dav1d
+- **Purpose**: AV1 decoder (original C implementation)
+- **Status**: Cloned and ready for integration
+- **Fork Location**: https://github.com/kipepeo-ai/dav1d
+- **Integration Notes**:
+  - Original C implementation of AV1 decoder
+  - Uses Meson build system
+  - Highly optimized with assembly code for various platforms
+  - Battle-tested and production-ready
+  - Can be used as alternative to rav1d
 
 ### whisper.cpp
 - **Purpose**: Speech recognition
@@ -48,7 +61,8 @@ This directory contains external dependencies that will be integrated into Kipep
 # Add submodules
 git submodule add https://github.com/ggerganov/llama.cpp third_party/llama.cpp
 git submodule add https://github.com/xiph/rav1e third_party/rav1e
-git submodule add https://github.com/videolan/dav1d third_party/dav1d
+git submodule add https://github.com/kipepeo-ai/rav1d third_party/rav1d
+git submodule add https://github.com/kipepeo-ai/dav1d third_party/dav1d
 git submodule add https://github.com/ggerganov/whisper.cpp third_party/whisper.cpp
 
 # Initialize and update
@@ -64,8 +78,9 @@ git submodule update --init --recursive
 
 ## Integration Status
 
-- [ ] llama.cpp - Not yet integrated
-- [ ] rav1e - Not yet integrated
-- [ ] dav1d - Not yet integrated
-- [ ] whisper.cpp - Not yet integrated
+- [x] llama.cpp - Cloned and ready for integration
+- [x] rav1e - Cloned and ready for integration
+- [x] rav1d - Cloned and ready for integration
+- [x] dav1d - Cloned and ready for integration
+- [x] whisper.cpp - Cloned and ready for integration
 

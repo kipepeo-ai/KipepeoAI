@@ -59,7 +59,7 @@ Native Interface (native_interface.cpp)
     ↓
 Core Libraries (LLM, Video, Kernels)
     ↓
-Third-Party Libraries (llama.cpp, rav1e, dav1d)
+Third-Party Libraries (llama.cpp, rav1e, rav1d/dav1d)
 ```
 
 ## Build System

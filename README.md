@@ -20,7 +20,7 @@ Kipepeo (Swahili for "butterfly") is a cutting-edge technology stack designed sp
 KipepeoAI-Org/
 ├── core/              # Core C/C++ libraries (LLM, video, kernels, quantization)
 ├── android/           # Android NDK library and app
-├── third_party/       # External dependencies (llama.cpp, rav1e, dav1d, whisper.cpp)
+├── third_party/       # External dependencies (llama.cpp, rav1e, rav1d/dav1d, whisper.cpp)
 ├── tools/             # Development tools and scripts
 ├── tests/             # Unit and integration tests
 └── docs/              # Documentation
@@ -92,7 +92,8 @@ The following dependencies need to be added as git submodules or forks:
 
 - `llama.cpp` - LLM inference engine
 - `rav1e` - AV1 encoder
-- `dav1d` - AV1 decoder
+- `rav1d` - AV1 decoder (Rust port of dav1d, C API compatible)
+- `dav1d` - AV1 decoder (original C implementation, alternative to rav1d)
 - `whisper.cpp` - Speech recognition
 
 See `third_party/` directory for setup instructions.
