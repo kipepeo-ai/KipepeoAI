@@ -23,6 +23,10 @@ target_include_directories(kipepeo_android PUBLIC
     ${CMAKE_SOURCE_DIR}/core/quantization/include
     ${CMAKE_SOURCE_DIR}/core/src/voice_call
     ${CMAKE_SOURCE_DIR}/core/src/vision
+    ${CMAKE_SOURCE_DIR}/core/src/health
+    ${CMAKE_SOURCE_DIR}/core/src/education
+    ${CMAKE_SOURCE_DIR}/core/src/finance
+    ${CMAKE_SOURCE_DIR}/core/src/mesh
 )
 
 # Link core libraries
@@ -33,6 +37,10 @@ target_link_libraries(kipepeo_android PRIVATE
     kipepeo_quantization
     kipepeo_voice
     kipepeo_vision
+    kipepeo_health
+    kipepeo_education
+    kipepeo_finance
+    kipepeo_mesh
 )
 
 # Android-specific compile definitions

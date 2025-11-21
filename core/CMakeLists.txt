@@ -23,3 +23,19 @@ endif()
 if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/src/vision")
     add_subdirectory(src/vision)
 endif()
+
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/src/health")
+    add_subdirectory(src/health)
+endif()
+
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/src/education")
+    add_subdirectory(src/education)
+endif()
+
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/src/finance")
+    add_subdirectory(src/finance)
+endif()
+
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/src/mesh")
+    add_subdirectory(src/mesh)
+endif()

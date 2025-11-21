@@ -63,6 +63,24 @@ fun KipepeoApp() {
                         onNavigateToVision = {
                             navController.navigate("vision")
                         },
+                        onNavigateToHealth = {
+                            navController.navigate("health")
+                        },
+                        onNavigateToLearn = {
+                            navController.navigate("learn")
+                        },
+                        onNavigateToMoney = {
+                            navController.navigate("money")
+                        },
+                        onNavigateToZeroData = {
+                            navController.navigate("zerodata")
+                        },
+                        onNavigateToMesh = {
+                            navController.navigate("mesh")
+                        },
+                        onNavigateToViral = {
+                            navController.navigate("viral")
+                        },
                         onNavigateToTranslation = {
                             // TODO: Implement translation mode
                         },
@@ -98,6 +116,30 @@ fun KipepeoApp() {
                 
                 composable("vision_textbook") {
                     com.kipepeo.app.vision.TextbookModeScreen()
+                }
+                
+                composable("health") {
+                    com.kipepeo.app.health.HealthScreen()
+                }
+                
+                composable("learn") {
+                    com.kipepeo.app.learn.LearnScreen()
+                }
+                
+                composable("money") {
+                    com.kipepeo.app.money.MoneyScreen()
+                }
+                
+                composable("zerodata") {
+                    com.kipepeo.app.zerodata.ZeroDataScreen()
+                }
+                
+                composable("mesh") {
+                    com.kipepeo.app.mesh.MeshScreen()
+                }
+                
+                composable("viral") {
+                    com.kipepeo.app.viral.ViralScreen()
                 }
             }
             

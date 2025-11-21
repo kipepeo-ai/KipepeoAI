@@ -3,11 +3,101 @@
 #include "native_interface.h"
 #include "voice_engine.h"
 #include "vision_engine.h"
+#include "health_engine.h"
+#include "tutor_engine.h"
 
 using namespace kipepeo::voice;
 using namespace kipepeo::vision;
+using namespace kipepeo::health;
+using namespace kipepeo::education;
 
 extern "C" {
+
+// --- Health JNI ---
+
+JNIEXPORT void JNICALL
+Java_com_kipepeo_app_health_HealthViewModel_initHealthEngine(JNIEnv *env, jobject thiz) {
+    HealthEngine::instance().init();
+}
+
+JNIEXPORT jstring JNICALL
+Java_com_kipepeo_app_health_HealthViewModel_diagnoseNative(JNIEnv *env, jobject thiz, jstring symptoms) {
+    const char *symptomsChars = env->GetStringUTFChars(symptoms, nullptr);
+    Diagnosis d = HealthEngine::instance().diagnose(std::string(symptomsChars));
+    env->ReleaseStringUTFChars(symptoms, symptomsChars);
+    
+    std::string result = d.condition + "|" + std::to_string(d.confidence) + "|" + d.recommendation + "|" + d.nearestClinic;
+    return env->NewStringUTF(result.c_str());
+}
+
+// --- Education JNI ---
+
+JNIEXPORT void JNICALL
+Java_com_kipepeo_app_learn_LearnViewModel_initTutorEngine(JNIEnv *env, jobject thiz) {
+    TutorEngine::instance().init();
+}
+
+JNIEXPORT jstring JNICALL
+Java_com_kipepeo_app_learn_LearnViewModel_askTutorNative(JNIEnv *env, jobject thiz, jstring subject, jstring question) {
+    const char *subjectChars = env->GetStringUTFChars(subject, nullptr);
+    const char *questionChars = env->GetStringUTFChars(question, nullptr);
+    
+    TutorResponse r = TutorEngine::instance().ask(std::string(subjectChars), std::string(questionChars));
+    
+    env->ReleaseStringUTFChars(subject, subjectChars);
+    env->ReleaseStringUTFChars(question, questionChars);
+    
+    return env->NewStringUTF(r.answer.c_str());
+}
+
+// --- Finance JNI ---
+
+#include "finance_engine.h"
+using namespace kipepeo::finance;
+
+JNIEXPORT void JNICALL
+Java_com_kipepeo_app_money_MoneyViewModel_initFinanceEngine(JNIEnv *env, jobject thiz) {
+    FinanceEngine::instance().init();
+}
+
+JNIEXPORT jstring JNICALL
+Java_com_kipepeo_app_money_MoneyViewModel_analyzeTransactionsNative(JNIEnv *env, jobject thiz, jstring smsData) {
+    const char *smsChars = env->GetStringUTFChars(smsData, nullptr);
+    auto txs = FinanceEngine::instance().analyzeTransactions(std::string(smsChars));
+    env->ReleaseStringUTFChars(smsData, smsChars);
+    
+    std::string result;
+    for (const auto& tx : txs) {
+        result += tx.id + "|" + tx.type + "|" + std::to_string(tx.amount) + "|" + tx.date + "|" + (tx.isSuspicious ? "1" : "0") + ";";
+    }
+    return env->NewStringUTF(result.c_str());
+}
+
+// --- Mesh JNI ---
+
+#include "mesh_engine.h"
+using namespace kipepeo::mesh;
+
+JNIEXPORT void JNICALL
+Java_com_kipepeo_app_mesh_MeshViewModel_initMeshEngine(JNIEnv *env, jobject thiz) {
+    MeshEngine::instance().init();
+}
+
+JNIEXPORT void JNICALL
+Java_com_kipepeo_app_mesh_MeshViewModel_startDiscoveryNative(JNIEnv *env, jobject thiz) {
+    MeshEngine::instance().startDiscovery();
+}
+
+JNIEXPORT jstring JNICALL
+Java_com_kipepeo_app_mesh_MeshViewModel_getPeersNative(JNIEnv *env, jobject thiz) {
+    auto peers = MeshEngine::instance().getPeers();
+    
+    std::string result;
+    for (const auto& peer : peers) {
+        result += peer.id + "|" + peer.name + "|" + std::to_string(peer.signalStrength) + "|" + (peer.isConnected ? "1" : "0") + ";";
+    }
+    return env->NewStringUTF(result.c_str());
+}
 
 // --- Vision JNI ---
 

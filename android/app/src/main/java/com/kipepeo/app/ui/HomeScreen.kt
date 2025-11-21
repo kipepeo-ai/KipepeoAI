@@ -33,6 +33,12 @@ fun HomeScreen(
     onNavigateToTranslation: () -> Unit = {},
     onNavigateToCalls: () -> Unit = {},
     onNavigateToVision: () -> Unit = {},
+    onNavigateToHealth: () -> Unit = {},
+    onNavigateToLearn: () -> Unit = {},
+    onNavigateToMoney: () -> Unit = {},
+    onNavigateToZeroData: () -> Unit = {},
+    onNavigateToMesh: () -> Unit = {},
+    onNavigateToViral: () -> Unit = {},
     onNavigateToKCSE: () -> Unit = {},
     dataSavedGB: Float = 1.87f
 ) {
@@ -130,6 +136,78 @@ fun HomeScreen(
                 colors = listOf(Color(0xFF9C27B0), Color(0xFF673AB7))
             ),
             onClick = onNavigateToTranslation
+        )
+        
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        QuickActionCard(
+            icon = Icons.Default.MedicalServices,
+            title = "Kipepeo Doctor",
+            subtitle = "Symptom Checker & Diagnosis",
+            gradient = Brush.horizontalGradient(
+                colors = listOf(Color(0xFF4CAF50), Color(0xFF388E3C))
+            ),
+            onClick = onNavigateToHealth
+        )
+        
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        QuickActionCard(
+            icon = Icons.Default.School,
+            title = "Kipepeo Teacher",
+            subtitle = "AI tutor with curriculum PDFs",
+            gradient = Brush.horizontalGradient(
+                colors = listOf(Color(0xFFFFC107), Color(0xFFFFA000))
+            ),
+            onClick = onNavigateToLearn
+        )
+        
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        QuickActionCard(
+            icon = Icons.Default.AttachMoney,
+            title = "Kipepeo Money",
+            subtitle = "Offline M-Pesa Agent",
+            gradient = Brush.horizontalGradient(
+                colors = listOf(Color(0xFF00E676), Color(0xFF00C853))
+            ),
+            onClick = onNavigateToMoney
+        )
+        
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        QuickActionCard(
+            icon = Icons.Default.SignalWifiOff,
+            title = "Zero-Data Mode",
+            subtitle = "Cached Content Feed",
+            gradient = Brush.horizontalGradient(
+                colors = listOf(Color(0xFF9E9E9E), Color(0xFF757575))
+            ),
+            onClick = onNavigateToZeroData
+        )
+        
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        QuickActionCard(
+            icon = Icons.Default.Share,
+            title = "Kipepeo Mesh",
+            subtitle = "Offline File Sharing",
+            gradient = Brush.horizontalGradient(
+                colors = listOf(Color(0xFF2979FF), Color(0xFF2962FF))
+            ),
+            onClick = onNavigateToMesh
+        )
+        
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        QuickActionCard(
+            icon = Icons.Default.Star,
+            title = "Invite & Earn",
+            subtitle = "Get Premium for Free",
+            gradient = Brush.horizontalGradient(
+                colors = listOf(Color(0xFFE040FB), Color(0xFFAA00FF))
+            ),
+            onClick = onNavigateToViral
         )
         
         Spacer(modifier = Modifier.height(16.dp))
