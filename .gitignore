@@ -1,0 +1,69 @@
+# Build artifacts
+build/
+out/
+bin/
+lib/
+*.so
+*.a
+*.dylib
+*.dll
+*.exe
+*.o
+*.obj
+
+# Android build files
+.gradle/
+local.properties
+*.apk
+*.ap_
+*.aab
+*.dex
+*.class
+proguard/
+*.iml
+
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+*.cmake
+!cmake/*.cmake
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Third-party dependencies (will be added as submodules)
+third_party/llama.cpp/
+third_party/rav1e/
+third_party/dav1d/
+third_party/whisper.cpp/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+
+# Test artifacts
+*.gcda
+*.gcno
+*.gcov
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+
