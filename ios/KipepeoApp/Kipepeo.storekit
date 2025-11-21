@@ -1,0 +1,38 @@
+{
+  "identifier" : "A1B2C3D4E5",
+  "nonRenewingSubscriptions" : [
+
+  ],
+  "products" : [
+    {
+      "displayPrice" : "0.99",
+      "familyShareable" : false,
+      "internalID" : "64455667",
+      "localizations" : [
+        {
+          "description" : "Unlock 70B Model & Unlimited Calls",
+          "displayName" : "Kipepeo Premium (Daily)",
+          "locale" : "en_US"
+        },
+        {
+          "description" : "Fungua 70B Model na Simu Bila Kikomo",
+          "displayName" : "Kipepeo Premium (Siku)",
+          "locale" : "sw_KE"
+        }
+      ],
+      "productID" : "com.kipepeo.premium.daily",
+      "referenceName" : "Daily Premium",
+      "type" : "Consumable"
+    }
+  ],
+  "settings" : {
+
+  },
+  "subscriptionGroups" : [
+
+  ],
+  "version" : {
+    "major" : 2,
+    "minor" : 0
+  }
+}

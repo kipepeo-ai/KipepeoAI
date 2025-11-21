@@ -19,6 +19,19 @@ set(VIDEO_HEADERS
     include/kipepeo/video/rav1e_integration.h
 )
 
+set(VIDEO_LIBS "")
+
+# iOS VideoToolbox support
+if(APPLE)
+    list(APPEND VIDEO_SOURCES ios/video_toolbox_decoder.mm)
+    
+    find_library(VIDEOTOOLBOX_LIBRARY VideoToolbox)
+    find_library(COREMEDIA_LIBRARY CoreMedia)
+    find_library(COREVIDEO_LIBRARY CoreVideo)
+    
+    list(APPEND VIDEO_LIBS ${VIDEOTOOLBOX_LIBRARY} ${COREMEDIA_LIBRARY} ${COREVIDEO_LIBRARY})
+endif()
+
 # Create library
 add_library(kipepeo_video STATIC
     ${VIDEO_SOURCES}
@@ -31,6 +44,7 @@ target_include_directories(kipepeo_video PUBLIC
 
 target_link_libraries(kipepeo_video PUBLIC
     kipepeo_kernels
+    ${VIDEO_LIBS}
 )
 
 # Link third-party dependencies when available
@@ -60,4 +74,3 @@ endif()
 target_compile_definitions(kipepeo_video PRIVATE
     KIPEPEO_VIDEO_BUILD
 )
-

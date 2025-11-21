@@ -50,19 +50,27 @@ Kipepeo is built on a modular architecture with the following core components:
 - Native interface for LLM and video compression
 - Shared library (.so) for Android apps
 
+### iOS Integration (`ios/KipepeoKit/`)
+
+- **KipepeoKit**: Swift framework wrapping the C++ core
+- **Metal Backend**: Hardware-accelerated inference using `ggml-metal`
+- **VideoToolbox**: Hardware AV1 decoding via `VTDecompressionSession`
+
+
 ## Data Flow
 
 ```
-Android App
-    ↓
-JNI Bridge (KipepeoNative.java)
-    ↓
-Native Interface (native_interface.cpp)
+Android App / iOS App
+    ↓          ↓
+JNI Bridge / KipepeoKit (Swift)
+    ↓          ↓
+Native Interface (C++)
     ↓
 Core Libraries (LLM, Video, Kernels)
     ↓
 Third-Party Libraries (llama.cpp, rav1e, rav1d/dav1d)
 ```
+
 
 ## Build System
 

@@ -22,6 +22,7 @@ Kipepeo (Swahili for "butterfly") is a cutting-edge technology stack designed sp
 KipepeoAI-Org/
 ├── core/              # Core C/C++ libraries (LLM, video, kernels, quantization)
 ├── android/           # Android NDK library and app
+├── ios/               # iOS Framework and App (SwiftUI + Metal)
 ├── third_party/       # External dependencies (llama.cpp, rav1e, rav1d/dav1d, whisper.cpp)
 ├── tools/             # Development tools and scripts
 ├── tests/             # Unit and integration tests
@@ -45,6 +46,13 @@ KipepeoAI-Org/
 - Gradle 8.1+
 - Android SDK Platform 33
 - Android NDK r25c+
+
+### iOS Development
+
+- macOS 14.0+
+- Xcode 15.0+
+- CMake 3.28+
+
 
 ## Quick Start - One-Click Build
 
@@ -138,6 +146,16 @@ make -j$(nproc)
 2. Sync Gradle files
 3. Build the project (Build > Make Project)
 4. The native library will be built automatically via CMake
+
+### iOS Build
+
+```bash
+mkdir build-ios
+cd build-ios
+cmake -G Xcode -DCMAKE_SYSTEM_NAME=iOS -DCMAKE_OSX_SYSROOT=iphoneos ..
+open KipepeoCore.xcodeproj
+```
+
 
 ## Development Setup
 
