@@ -31,6 +31,8 @@ import com.kipepeo.app.ui.theme.*
 fun HomeScreen(
     onNavigateToChat: () -> Unit = {},
     onNavigateToTranslation: () -> Unit = {},
+    onNavigateToCalls: () -> Unit = {},
+    onNavigateToVision: () -> Unit = {},
     onNavigateToKCSE: () -> Unit = {},
     dataSavedGB: Float = 1.87f
 ) {
@@ -92,6 +94,30 @@ fun HomeScreen(
                 colors = listOf(KipepeoCyan, KipepeoCyanDark)
             ),
             onClick = onNavigateToChat
+        )
+        
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        QuickActionCard(
+            icon = Icons.Default.Call,
+            title = "Kipepeo Calls",
+            subtitle = "Offline Voice & Translation",
+            gradient = Brush.horizontalGradient(
+                colors = listOf(Color(0xFF00E5FF), Color(0xFF00B8D4))
+            ),
+            onClick = onNavigateToCalls
+        )
+        
+        Spacer(modifier = Modifier.height(16.dp))
+
+        QuickActionCard(
+            icon = Icons.Default.Visibility,
+            title = "Kipepeo Vision",
+            subtitle = "Farmer Mode & Image Gen",
+            gradient = Brush.horizontalGradient(
+                colors = listOf(Color(0xFFE91E63), Color(0xFFC2185B))
+            ),
+            onClick = onNavigateToVision
         )
         
         Spacer(modifier = Modifier.height(16.dp))

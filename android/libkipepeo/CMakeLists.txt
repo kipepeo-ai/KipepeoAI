@@ -21,6 +21,8 @@ target_include_directories(kipepeo_android PUBLIC
     ${CMAKE_SOURCE_DIR}/core/video/include
     ${CMAKE_SOURCE_DIR}/core/kernels/include
     ${CMAKE_SOURCE_DIR}/core/quantization/include
+    ${CMAKE_SOURCE_DIR}/core/src/voice_call
+    ${CMAKE_SOURCE_DIR}/core/src/vision
 )
 
 # Link core libraries
@@ -29,6 +31,8 @@ target_link_libraries(kipepeo_android PRIVATE
     kipepeo_video
     kipepeo_kernels
     kipepeo_quantization
+    kipepeo_voice
+    kipepeo_vision
 )
 
 # Android-specific compile definitions

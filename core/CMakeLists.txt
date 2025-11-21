@@ -1,18 +1,25 @@
-# Core Libraries CMakeLists.txt
+cmake_minimum_required(VERSION 3.18)
 
-if(KIPEPEO_BUILD_LLM)
-    add_subdirectory(llm)
+project(kipepeo_core)
+
+# Set C++ standard
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+# Include directories
+include_directories(include)
+
+# Add subdirectories
+add_subdirectory(video)
+add_subdirectory(llm)
+add_subdirectory(quantization)
+add_subdirectory(kernels)
+
+# New Voice Call Module
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/src/voice_call")
+    add_subdirectory(src/voice_call)
 endif()
 
-if(KIPEPEO_BUILD_VIDEO)
-    add_subdirectory(video)
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/src/vision")
+    add_subdirectory(src/vision)
 endif()
-
-if(KIPEPEO_BUILD_KERNELS)
-    add_subdirectory(kernels)
-endif()
-
-if(KIPEPEO_BUILD_QUANTIZATION)
-    add_subdirectory(quantization)
-endif()
-

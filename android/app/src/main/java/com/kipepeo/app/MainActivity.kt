@@ -57,6 +57,12 @@ fun KipepeoApp() {
                         onNavigateToChat = {
                             navController.navigate("chat")
                         },
+                        onNavigateToCalls = {
+                            navController.navigate("calls")
+                        },
+                        onNavigateToVision = {
+                            navController.navigate("vision")
+                        },
                         onNavigateToTranslation = {
                             // TODO: Implement translation mode
                         },
@@ -72,6 +78,26 @@ fun KipepeoApp() {
                             navController.popBackStack()
                         }
                     )
+                }
+
+                composable("calls") {
+                    com.kipepeo.app.calls.CallsScreen()
+                }
+                
+                composable("vision") {
+                    com.kipepeo.app.vision.VisionScreen(navController)
+                }
+                
+                composable("vision_farmer") {
+                    com.kipepeo.app.vision.FarmerModeScreen()
+                }
+                
+                composable("vision_gen") {
+                    com.kipepeo.app.vision.ImageGenScreen()
+                }
+                
+                composable("vision_textbook") {
+                    com.kipepeo.app.vision.TextbookModeScreen()
                 }
             }
             
