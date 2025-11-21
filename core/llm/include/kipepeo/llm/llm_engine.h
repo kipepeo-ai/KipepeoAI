@@ -19,8 +19,20 @@ public:
     // Initialize engine with model path
     bool initialize(const char* model_path);
 
-    // Generate text from prompt
+    // Generation parameters
+    struct GenerationParams {
+        int max_tokens = 256;
+        float temperature = 0.8f;
+        int top_k = 40;
+        float top_p = 0.9f;
+        float repeat_penalty = 1.1f;
+    };
+
+    // Generate text from prompt (simple version)
     bool generate(const char* prompt, char* output, size_t output_size);
+    
+    // Generate text with custom parameters
+    bool generate(const char* prompt, char* output, size_t output_size, const GenerationParams& params);
 
     // Get inference speed (tokens per second)
     float get_tokens_per_second() const;

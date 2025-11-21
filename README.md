@@ -2,6 +2,8 @@
 
 **Ultra-efficient Offline AI + Video Compression Stack for Low-end Android Phones**
 
+![Kipepeo Logo](docs/images/kipepeo-logo.png)
+
 Kipepeo (Swahili for "butterfly") is a cutting-edge technology stack designed specifically for the Kenyan market, combining:
 
 - **Offline LLM Inference**: Run 13B-70B language models completely offline on $80 Android phones at 30-80 tokens/sec
@@ -43,6 +45,66 @@ KipepeoAI-Org/
 - Gradle 8.1+
 - Android SDK Platform 33
 - Android NDK r25c+
+
+## Quick Start - One-Click Build
+
+### Prerequisites
+- Android Studio (latest version)
+- Android NDK r25c+
+- Python 3.8+ (for model downloads)
+- Git
+
+### Build Release APK (One Command!)
+
+```bash
+# From project root
+cd android
+./gradlew assembleRelease
+```
+
+The APK will be at: `android/app/build/outputs/apk/release/app-release.apk`
+
+### Complete Setup (First Time)
+
+1. **Clone & Setup**
+   ```bash
+   git clone https://github.com/kipepeo-ai/KipepeoAI.git
+   cd KipepeoAI
+   git submodule update --init --recursive
+   ```
+
+2. **Download Models (Optional, but recommended)**
+   ```bash
+   cd tools/model-downloader
+   pip install -r requirements.txt
+   
+   # Download 34B model (recommended for v1.0.0)
+   python download_models.py --models 34B
+   ```
+
+3. **Build APK**
+   ```bash
+   cd ../../android
+   ./gradlew assembleRelease
+   ```
+
+4. **Install on Device**
+   ```bash
+   adb install app/build/outputs/apk/release/app-release.apk
+   ```
+
+### Firebase App Distribution Setup
+
+To deploy to Firebase App Distribution (kenya-testers group):
+
+1. Create Firebase project at https://console.firebase.google.com
+2. Add Android app with package name `com.kipepeo.app`
+3. Download `google-services.json` to `android/app/`
+4. Set up GitHub secrets:
+   - `FIREBASE_APP_ID`: Your Firebase app ID
+   - `FIREBASE_SERVICE_ACCOUNT`: Service account JSON
+
+GitHub Actions will automatically deploy to Firebase on push to `main`.
 
 ## Building the Project
 
@@ -133,9 +195,19 @@ cmake .. -DKIPEPEO_BUILD_LLM=ON \
 
 ## Roadmap
 
+### ✅ v1.0.0-kenya (Current Release)
+- Offline LLM inference (7B-70B models)
+- Video compression (40-60% data savings)
+- ARM NEON optimizations for MediaTek
+- Jetpack Compose UI with Swahili/English/Sheng
+- One-click build system
+- CI/CD with GitHub Actions
+- Firebase App Distribution
+
+### Upcoming Milestones
 See the project roadmap for detailed 12-month execution plan covering:
-- Month 0-1: Foundation & MVP Definition
-- Month 2-3: Offline AI on $80 Phones
+- Month 0-1: Foundation & MVP Definition ✅ **DONE**
+- Month 2-3: Offline AI on $80 Phones ✅ **DONE**
 - Month 4-6: Real-time AV1 Encoding
 - Month 7-8: AI-Powered Adaptive Streaming
 - Month 9-10: System-Level Integration

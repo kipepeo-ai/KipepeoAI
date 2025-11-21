@@ -1,0 +1,7 @@
+id=kipepeo_hooks
+name=Kipepeo AI System Hooks
+version=1.0.0
+versionCode=1
+author=Kipepeo AI Team
+description=System-level PLT hooks for transparent AV1 video codec redirection. Enables Kipepeo AI to intercept MediaCodec calls and reduce data usage.
+minMagisk=24000

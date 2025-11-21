@@ -3,12 +3,14 @@
 set(KERNELS_SOURCES
     src/neon/matrix_multiply.cpp
     src/neon/vector_ops.cpp
+    src/neon/quantized_gemm.cpp
     src/mediatek/helio_optimizations.cpp
 )
 
 set(KERNELS_HEADERS
     include/kipepeo/kernels/neon/matrix_multiply.h
     include/kipepeo/kernels/neon/vector_ops.h
+    include/kipepeo/kernels/neon/quantized_gemm.h
     include/kipepeo/kernels/mediatek/helio_optimizations.h
     include/kipepeo/kernels/types.h
 )

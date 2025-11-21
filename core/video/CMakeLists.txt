@@ -5,6 +5,8 @@ set(VIDEO_SOURCES
     src/av1_decoder.cpp
     src/video_compressor.cpp
     src/rate_control.cpp
+    src/kip_mode_lowband.cpp
+    src/rav1e_integration.cpp
 )
 
 set(VIDEO_HEADERS
@@ -13,6 +15,8 @@ set(VIDEO_HEADERS
     include/kipepeo/video/video_compressor.h
     include/kipepeo/video/rate_control.h
     include/kipepeo/video/types.h
+    include/kipepeo/video/kip_mode_lowband.h
+    include/kipepeo/video/rav1e_integration.h
 )
 
 # Create library

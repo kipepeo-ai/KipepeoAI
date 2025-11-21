@@ -16,5 +16,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Kipepeo"
 include ':app'
-include ':libkipepeo'
-
+include ':kipepeo-ndk'

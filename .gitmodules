@@ -13,3 +13,6 @@
 [submodule "third_party/whisper.cpp"]
 	path = third_party/whisper.cpp
 	url = https://github.com/kipepeo-ai/whisper.cpp.git
+[submodule "third_party/xhook"]
+	path = third_party/xhook
+	url = https://github.com/iqiyi/xHook.git

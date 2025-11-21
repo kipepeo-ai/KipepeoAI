@@ -1,0 +1,40 @@
+{
+    "models": {
+        "7B": {
+            "repo_id": "TheBloke/Llama-2-7B-GGUF",
+            "filename": "llama-2-7b.Q4_K_M.gguf",
+            "size_mb": 4200,
+            "description": "Llama 2 7B quantized to 4-bit (Q4_K_M)",
+            "recommended_ram_mb": 6000
+        },
+        "13B": {
+            "repo_id": "TheBloke/Llama-2-13B-GGUF",
+            "filename": "llama-2-13b.Q4_K_M.gguf",
+            "size_mb": 7600,
+            "description": "Llama 2 13B quantized to 4-bit (Q4_K_M)",
+            "recommended_ram_mb": 10000
+        },
+        "34B": {
+            "repo_id": "TheBloke/CodeLlama-34B-GGUF",
+            "filename": "codellama-34b.Q4_K_M.gguf",
+            "size_mb": 19000,
+            "description": "CodeLlama 34B quantized to 4-bit (Q4_K_M)",
+            "recommended_ram_mb": 22000,
+            "notes": "Target model for Kipepeo v1.0.0"
+        },
+        "70B": {
+            "repo_id": "TheBloke/Llama-2-70B-GGUF",
+            "filename": "llama-2-70b.Q4_K_M.gguf",
+            "size_mb": 38000,
+            "description": "Llama 2 70B quantized to 4-bit (Q4_K_M)",
+            "recommended_ram_mb": 42000,
+            "notes": "For high-end devices only"
+        }
+    },
+    "notes": [
+        "These are placeholder models using TheBloke's GGUF quantizations",
+        "Replace with actual kipepeo-ai/africa-llm-* repositories when available",
+        "Q4_K_M format provides good balance between size and quality",
+        "For production, use custom AfricaQuant models from kipepeo-ai organization"
+    ]
+}

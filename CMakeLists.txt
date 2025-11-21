@@ -77,8 +77,60 @@ include_directories(
     ${CMAKE_SOURCE_DIR}/core/quantization/include
 )
 
+#Add third-party dependencies
+# llama.cpp integration
+option(LLAMA_BUILD_TESTS "llama: build tests" OFF)
+option(LLAMA_BUILD_EXAMPLES "llama: build examples" OFF)
+option(LLAMA_BUILD_SERVER "llama: build server" OFF)
+option(LLAMA_BUILD_TOOLS "llama: build tools" OFF)
+option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
+
+if(ANDROID)
+    # For Android, we want static library
+    set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build shared libraries" FORCE)
+    
+    # ARM NEON optimizations (enabled by default on ARM)
+    # llama.cpp will automatically detect and use NEON on ARM processors
+    message(STATUS "Android build detected - NEON optimizations will be auto-enabled")
+    
+    # Optimize for size and speed on mobile
+    set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -ffast-math")
+    set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -ffast-math")
+endif()
+
+# Performance optimizations for llama.cpp
+# Enable CPU backend (includes NEON for ARM)
+set(GGML_CPU ON CACHE BOOL "Enable CPU backend with NEON" FORCE)
+
+# Disable backends we don't need on mobile
+set(GGML_CUDA OFF CACHE BOOL "Disable CUDA" FORCE)
+set(GGML_METAL OFF CACHE BOOL "Disable Metal" FORCE)
+set(GGML_VULKAN OFF CACHE BOOL "Disable Vulkan" FORCE)
+set(GGML_SYCL OFF CACHE BOOL "Disable SYCL" FORCE)
+
+add_subdirectory(third_party/llama.cpp EXCLUDE_FROM_ALL)
+
 # Add subdirectories
 add_subdirectory(core)
+
+# Create unified core library for Android NDK
+if(NOT ANDROID)
+    # Only create the unified target for non-Android builds
+    # Android builds will link libraries directly
+    add_library(kipepeo_core INTERFACE)
+    target_link_libraries(kipepeo_core INTERFACE
+        kipepeo_kernels
+        kipepeo_quantization
+        kipepeo_llm
+        kipepeo_video
+    )
+    target_include_directories(kipepeo_core INTERFACE
+        ${CMAKE_SOURCE_DIR}/core/llm/include
+        ${CMAKE_SOURCE_DIR}/core/video/include
+        ${CMAKE_SOURCE_DIR}/core/kernels/include
+        ${CMAKE_SOURCE_DIR}/core/quantization/include
+    )
+endif()
 
 if(KIPEPEO_BUILD_ANDROID)
     add_subdirectory(android)

@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">Kipepeo AI</string>
+    <string name="engine_activate">Activate Kipepeo Engine</string>
+    <string name="engine_status">Status</string>
+    <string name="llm_speed">LLM Speed</string>
+    <string name="data_saved">Data Saved</string>
+    <string name="compression">Compression</string>
+    <string name="reset_stats">Reset Statistics</string>
+    <string name="root_access">Root Access</string>
+    <string name="non_root_mode">Non-Root Mode</string>
+    <string name="full_hooking_enabled">Full PLT hooking enabled</string>
+    <string name="limited_functionality">Limited functionality (VPN mode)</string>
+    <string name="tokens_per_sec">%1$.1f tokens/sec</string>
+    <string name="idle">Idle</string>
+    <string name="mb_format">%1$.2f MB</string>
+    <string name="zero_mb">0 MB</string>
+    <string name="compression_percent">%1$d%% reduction</string>
+</resources>

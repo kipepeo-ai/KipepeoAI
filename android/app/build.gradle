@@ -1,36 +1,146 @@
 plugins {
     id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+    id 'org.jetbrains.kotlin.plugin.compose' version '1.9.22'
 }
 
 android {
-    namespace 'com.kipepeo.app'
-    compileSdk 33
+    namespace 'ai.kipepeo'
+    compileSdk 35
 
     defaultConfig {
-        applicationId "com.kipepeo.app"
-        minSdk 21
-        targetSdk 33
+        applicationId "ai.kipepeo"
+        minSdk 24
+        targetSdk 35
         versionCode 1
-        versionName "1.0.0"
+        versionName "1.0.0-kenya"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        
+        // NDK configuration - both ABIs for maximum compatibility
+        ndk {
+            abiFilters 'arm64-v8a', 'armeabi-v7a'
+        }
+        
+        vectorDrawables {
+            useSupportLibrary true
+        }
+    }
+
+    // Load keystore properties for release signing
+    def keystorePropertiesFile = rootProject.file("keystore.properties")
+    def keystoreProperties = new Properties()
+    if (keystorePropertiesFile.exists()) {
+        keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+    }
+
+    signingConfigs {
+        release {
+            if (keystorePropertiesFile.exists()) {
+                storeFile file(keystoreProperties['storeFile'])
+                storePassword keystoreProperties['storePassword']
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+            }
+        }
     }
 
     buildTypes {
+        debug {
+            applicationIdSuffix ".debug"
+            versionNameSuffix "-debug"
+            debuggable true
+        }
+        
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            
+            if (keystorePropertiesFile.exists()) {
+                signingConfig signingConfigs.release
+            } else {
+                // Fall back to debug signing if no keystore configured
+                signingConfig signingConfigs.debug
+            }
+            
+            // Optimization flags
+            ndk {
+                debugSymbolLevel 'SYMBOL_TABLE'
+            }
         }
     }
     
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+    
+    kotlinOptions {
+        jvmTarget = '17'
+        freeCompilerArgs = [
+            '-opt-in=kotlin.RequiresOptIn',
+            '-opt-in=androidx.compose.material3.ExperimentalMaterial3Api',
+            '-opt-in=androidx.compose.foundation.ExperimentalFoundationApi'
+        ]
+    }
+    
+    buildFeatures {
+        compose true
+        buildConfig true
+    }
+    
+    composeOptions {
+        kotlinCompilerExtensionVersion = '1.5.8'
+    }
+    
+    packaging {
+        resources {
+            excludes += '/META-INF/{AL2.0,LGPL2.1}'
+            excludes += '/META-INF/LICENSE*'
+        }
     }
 }
 
 dependencies {
-    implementation project(':libkipepeo')
-    // Android dependencies will be added as needed
+    // Kipepeo NDK library
+    implementation project(':kipepeo-ndk')
+    
+    // Kotlin
+    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.22"
+    
+    // AndroidX Core
+    implementation 'androidx.core:core-ktx:1.15.0'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.8.7'
+    implementation 'androidx.activity:activity-compose:1.9.3'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7'
+    
+    // Jetpack Compose BOM
+    implementation platform('androidx.compose:compose-bom:2024.12.01')
+    implementation 'androidx.compose.ui:ui'
+    implementation 'androidx.compose.ui:ui-graphics'
+    implementation 'androidx.compose.ui:ui-tooling-preview'
+    implementation 'androidx.compose.material3:material3'
+    implementation 'androidx.compose.material:material-icons-extended'
+    
+    // Compose Navigation
+    implementation 'androidx.navigation:navigation-compose:2.8.5'
+    
+    // Coroutines
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.10.1'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.1'
+    
+    // DataStore (for preferences)
+    implementation 'androidx.data store:datastore-preferences:1.1.1'
+    
+    // Testing
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.2.1'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.6.1'
+    androidTestImplementation platform('androidx.compose:compose-bom:2024.12.01')
+    androidTestImplementation 'androidx.compose.ui:ui-test-junit4'
+    
+    // Debug
+    debugImplementation 'androidx.compose.ui:ui-tooling'
+    debugImplementation 'androidx.compose.ui:ui-test-manifest'
 }
-

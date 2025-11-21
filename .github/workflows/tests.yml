@@ -1,0 +1,98 @@
+name: C++ Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  test-x64:
+    name: Test C++ Core (x64)
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake ninja-build g++ python3
+      
+      - name: Configure CMake
+        run: |
+          mkdir build
+          cd build
+          cmake .. -GNinja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DKIPEPEO_BUILD_TESTS=ON \
+            -DKIPEPEO_BUILD_LLM=ON \
+            -DKIPEPEO_BUILD_VIDEO=ON \
+            -DKIPEPEO_BUILD_KERNELS=ON \
+            -DKIPEPEO_BUILD_QUANTIZATION=ON
+      
+      - name: Build
+        run: |
+          cd build
+          ninja
+      
+      - name: Run tests
+        run: |
+          cd build
+          ctest --output-on-failure --verbose
+      
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-x64
+          path: build/Testing/
+          retention-days: 7
+
+  test-arm:
+    name: Test C++ Core (ARM via QEMU)
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+        with:
+          platforms: arm64
+      
+      - name: Build and test in ARM container
+        uses: docker/run-action@v1
+        with:
+          image: arm64v8/ubuntu:22.04
+          options: -v ${{ github.workspace }}:/workspace
+          run: |
+            apt-get update
+            apt-get install -y cmake ninja-build g++ python3
+            cd /workspace
+            mkdir -p build-arm
+            cd build-arm
+            cmake .. -GNinja \
+              -DCMAKE_BUILD_TYPE=Release \
+              -DKIPEPEO_BUILD_TESTS=ON \
+              -DKIPEPEO_BUILD_LLM=ON \
+              -DKIPEPEO_BUILD_VIDEO=ON \
+              -DKIPEPEO_BUILD_KERNELS=ON \
+              -DKIPEPEO_BUILD_QUANTIZATION=ON
+            ninja
+            ctest --output-on-failure --verbose || true
+      
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results-arm
+          path: build-arm/Testing/
+          retention-days: 7

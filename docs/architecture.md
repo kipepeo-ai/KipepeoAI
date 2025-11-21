@@ -2,6 +2,8 @@
 
 ## Overview
 
+![Kipepeo Architecture](images/readme.png)
+
 Kipepeo is built on a modular architecture with the following core components:
 
 ## Core Components
