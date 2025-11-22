@@ -1,19 +1,18 @@
 #include "kipepeo/video/rav1e_integration.h"
+#include "kipepeo/video/av1_encoder.h"
 #include <cstring>
-
-// TODO: Include rav1e C API headers
-// #include "rav1e/rav1e.h"
+#include <algorithm>
 
 namespace kipepeo {
 namespace video {
 
 class Rav1eIntegration::Impl {
 public:
-    // RaContext* encoder_ = nullptr;
-    KipModeLowband kip_mode_;
+    AV1Encoder encoder_;
     Rav1eConfig config_;
     EncodingStats stats_;
     uint64_t frame_count_ = 0;
+    bool initialized_ = false;
 
     Impl() {
         memset(&stats_, 0, sizeof(stats_));
@@ -23,34 +22,31 @@ public:
 Rav1eIntegration::Rav1eIntegration() : impl_(new Impl()) {}
 
 Rav1eIntegration::~Rav1eIntegration() {
-    // TODO: Cleanup rav1e encoder
     delete impl_;
 }
 
 bool Rav1eIntegration::initialize(const Rav1eConfig& config) {
     impl_->config_ = config;
 
-    // Initialize kip-mode if enabled
-    if (config.use_kip_mode) {
-        if (!impl_->kip_mode_.initialize(config.kip_config)) {
-            return false;
-        }
+    // Convert Rav1eConfig to AV1Encoder::Config
+    AV1Encoder::Config encoder_config;
+    encoder_config.width = config.width;
+    encoder_config.height = config.height;
+    encoder_config.fps_num = config.fps_num;
+    encoder_config.fps_den = config.fps_den;
+    encoder_config.bitrate_kbps = config.bitrate_kbps;
+    encoder_config.speed = 6; // Default speed preset
+    encoder_config.threads = config.threads;
+    encoder_config.use_kip_mode = config.use_kip_mode;
+    encoder_config.kip_config = config.kip_config;
+    encoder_config.low_latency = false; // Can be made configurable
+
+    // Initialize encoder
+    if (!impl_->encoder_.initialize(encoder_config)) {
+        return false;
     }
 
-    // TODO: Initialize rav1e encoder
-    // Example pseudo-code:
-    // RaConfig* ra_config = rav1e_config_default();
-    // rav1e_config_set_pixel_format(ra_config, RA_PIXEL_FORMAT_YUV420P);
-    // rav1e_config_set_dimensions(ra_config, config.width, config.height);
-    // rav1e_config_set_ratecontrol(ra_config, RA_RATECONTROL_VBR, config.bitrate_kbps);
-    //
-    // if (config.use_kip_mode) {
-    //     // Register custom rate control callback
-    //     // rav1e_config_set_custom_rc_callback(ra_config, kip_mode_callback, &impl_->kip_mode_);
-    // }
-    //
-    // impl_->encoder_ = rav1e_context_new(ra_config);
-
+    impl_->initialized_ = true;
     return true;
 }
 
@@ -60,52 +56,96 @@ bool Rav1eIntegration::encode_frame(
     size_t output_size,
     size_t* bytes_written
 ) {
-    if (!yuv_frame || !output || !bytes_written) return false;
-
-    // Analyze frame with kip-mode if enabled
-    if (impl_->config_.use_kip_mode) {
-        FrameAnalysis analysis;
-        impl_->kip_mode_.analyze_frame(
-            yuv_frame,
-            impl_->config_.width,
-            impl_->config_.height,
-            &analysis
-        );
-
-        // Use analysis to adjust encoding parameters
-        // This would be done via rav1e callback or per-frame configuration
+    if (!impl_->initialized_ || !yuv_frame || !output || !bytes_written) {
+        return false;
     }
 
-    // TODO: Encode frame with rav1e
-    // Example pseudo-code:
-    // RaFrame* frame = rav1e_frame_new(impl_->encoder_);
-    // rav1e_frame_fill_plane(frame, 0, yuv_frame, ...); // Y plane
-    // rav1e_frame_fill_plane(frame, 1, yuv_frame + ..., ...); // U plane
-    // rav1e_frame_fill_plane(frame, 2, yuv_frame + ..., ...); // V plane
-    //
-    // RaPacket* packet = rav1e_send_frame(impl_->encoder_, frame);
-    // if (packet) {
-    //     *bytes_written = rav1e_packet_data(packet, output, output_size);
-    //     rav1e_packet_unref(packet);
-    // }
+    // Prepare frame for encoding
+    AV1Encoder::Frame frame;
+    
+    // YUV420 format: Y plane, then U, then V
+    int width = impl_->config_.width;
+    int height = impl_->config_.height;
+    size_t y_size = width * height;
+    size_t uv_size = (width / 2) * (height / 2);
+    
+    frame.y_plane = yuv_frame;
+    frame.u_plane = yuv_frame + y_size;
+    frame.v_plane = yuv_frame + y_size + uv_size;
+    frame.y_stride = width;
+    frame.uv_stride = width / 2;
+    frame.width = width;
+    frame.height = height;
+    frame.pts = impl_->frame_count_;
+    frame.force_keyframe = false;
 
+    // Send frame to encoder
+    if (!impl_->encoder_.send_frame(&frame)) {
+        return false;
+    }
+
+    // Receive encoded packet
+    AV1Encoder::Packet packet;
+    if (!impl_->encoder_.receive_packet(&packet)) {
+        // May need more frames before packet is available
+        *bytes_written = 0;
+        return true; // Not an error, just need more data
+    }
+
+    // Copy packet data to output
+    if (packet.size > output_size) {
+        return false; // Output buffer too small
+    }
+    
+    memcpy(output, packet.data, packet.size);
+    *bytes_written = packet.size;
+
+    // Update stats
     impl_->frame_count_++;
-    *bytes_written = 1024; // Placeholder
+    impl_->stats_.total_frames++;
+    impl_->stats_.total_bytes += packet.size;
+    impl_->stats_.average_bitrate = 
+        (impl_->stats_.total_bytes * 8.0f / 1000.0f) / 
+        (impl_->frame_count_ * impl_->config_.fps_den / 
+         static_cast<float>(impl_->config_.fps_num));
 
     return true;
 }
 
 bool Rav1eIntegration::flush(uint8_t* output, size_t output_size, size_t* bytes_written) {
-    // TODO: Flush rav1e encoder
-    *bytes_written = 0;
+    if (!impl_->initialized_ || !output || !bytes_written) {
+        return false;
+    }
+
+    // Flush encoder
+    AV1Encoder::Packet packet;
+    if (!impl_->encoder_.flush(&packet)) {
+        *bytes_written = 0;
+        return true; // No more packets
+    }
+
+    // Copy packet data
+    if (packet.size > output_size) {
+        return false;
+    }
+    
+    memcpy(output, packet.data, packet.size);
+    *bytes_written = packet.size;
+
     return true;
 }
 
 Rav1eIntegration::EncodingStats Rav1eIntegration::get_stats() const {
     EncodingStats stats = impl_->stats_;
+    
+    // Get encoder stats
+    AV1Encoder::Stats encoder_stats = impl_->encoder_.get_stats();
+    stats.average_psnr = encoder_stats.average_psnr;
+    
     if (impl_->config_.use_kip_mode) {
-        stats.kip_stats = impl_->kip_mode_.get_stats();
+        stats.kip_stats = encoder_stats.kip_stats;
     }
+    
     return stats;
 }
 

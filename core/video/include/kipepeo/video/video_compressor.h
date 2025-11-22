@@ -1,5 +1,6 @@
 #pragma once
 
+#include "kipepeo/video/types.h"
 #include <cstddef>
 #include <cstdint>
 
@@ -27,6 +28,8 @@ public:
     void set_ai_rate_control(bool enabled);
 
 private:
+    bool initialize_encoder(const EncodingParams& params);
+    
     class Impl;
     Impl* impl_;
 };
