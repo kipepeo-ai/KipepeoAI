@@ -4,15 +4,41 @@ set(KERNELS_SOURCES
     src/neon/matrix_multiply.cpp
     src/neon/vector_ops.cpp
     src/neon/quantized_gemm.cpp
+    src/chip_detection.cpp
+    src/kernel_dispatch.cpp
+    # MediaTek Helio series
     src/mediatek/helio_optimizations.cpp
+    src/mediatek/helio_g85.cpp
+    src/mediatek/helio_g99.cpp
+    src/mediatek/helio_g100.cpp
+    # Qualcomm Snapdragon series
+    src/qualcomm/snapdragon_7s_gen2.cpp
+    src/qualcomm/snapdragon_common.cpp
+    # Unisoc series
+    src/unisoc/t606.cpp
+    # Apple Silicon
+    src/apple/neon_apple.cpp
 )
 
 set(KERNELS_HEADERS
     include/kipepeo/kernels/neon/matrix_multiply.h
     include/kipepeo/kernels/neon/vector_ops.h
     include/kipepeo/kernels/neon/quantized_gemm.h
-    include/kipepeo/kernels/mediatek/helio_optimizations.h
+    include/kipepeo/kernels/chip_detection.h
+    include/kipepeo/kernels/kernel_dispatch.h
     include/kipepeo/kernels/types.h
+    # MediaTek Helio series
+    include/kipepeo/kernels/mediatek/helio_optimizations.h
+    include/kipepeo/kernels/mediatek/helio_g85.h
+    include/kipepeo/kernels/mediatek/helio_g99.h
+    include/kipepeo/kernels/mediatek/helio_g100.h
+    # Qualcomm Snapdragon series
+    include/kipepeo/kernels/qualcomm/snapdragon_7s_gen2.h
+    include/kipepeo/kernels/qualcomm/snapdragon_common.h
+    # Unisoc series
+    include/kipepeo/kernels/unisoc/t606.h
+    # Apple Silicon
+    include/kipepeo/kernels/apple/neon_apple.h
 )
 
 set(KERNEL_LIBS "")
