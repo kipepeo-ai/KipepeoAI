@@ -1,8 +1,11 @@
 #pragma once
 
 #include "kipepeo/quantization/types.h"
+#include "kipepeo/quantization/quantization_error.h"
+#include "kipepeo/quantization/hardware_detection.h"
 #include <stddef.h>
 #include <stdint.h>
+#include <functional>
 
 namespace kipepeo {
 namespace quantization {
@@ -30,6 +33,30 @@ struct QuantizationMeta {
     uint32_t codebook_size;   // Size of codebook (3 for 1.28-bit, 4 for 1.58-bit)
 };
 
+// Progress callback function type
+// Called during long operations with progress (0.0 to 1.0)
+typedef std::function<void(float progress)> ProgressCallback;
+
+// Quantization configuration
+struct QuantizationConfig {
+    uint32_t block_size;              // Block size (0 = auto-detect)
+    float threshold_1_28;             // Threshold for 1.28-bit (0.0 = auto)
+    bool use_memory_pooling;           // Enable memory pooling
+    bool detect_outliers;              // Enable outlier detection
+    bool use_adaptive_thresholds;      // Use adaptive thresholds
+    ProgressCallback progress_callback; // Progress callback (optional)
+    HardwareCapabilities hardware;     // Hardware capabilities (auto-detected if not set)
+    
+    QuantizationConfig() 
+        : block_size(0)
+        , threshold_1_28(0.0f)
+        , use_memory_pooling(true)
+        , detect_outliers(true)
+        , use_adaptive_thresholds(true)
+        , hardware(detect_hardware_capabilities())
+    {}
+};
+
 class AfricaQuant {
 public:
     AfricaQuant();
@@ -45,10 +72,23 @@ public:
      * @param count Number of weights
      * @param output Output quantized buffer (size: count * 1.28 / 8 bytes)
      * @param metadata Output quantization metadata (per block)
-     * @param block_size Block size for group quantization (default: 128)
-     * @return true on success
+     * @param block_size Block size for group quantization (0 = auto-detect)
+     * @param config Optional configuration (nullptr = use defaults)
+     * @return QuantizationError code
      */
-    bool quantize_1_28bit(
+    QuantizationError quantize_1_28bit(
+        const float* weights,
+        size_t count,
+        uint8_t* output,
+        QuantizationMeta* metadata,
+        uint32_t block_size = 0,
+        const QuantizationConfig* config = nullptr
+    );
+    
+    /**
+     * Legacy API: Quantize with bool return (for backward compatibility)
+     */
+    bool quantize_1_28bit_legacy(
         const float* weights,
         size_t count,
         uint8_t* output,
@@ -58,8 +98,20 @@ public:
 
     /**
      * Dequantize 1.28-bit weights back to float
+     * @return QuantizationError code
      */
-    bool dequantize_1_28bit(
+    QuantizationError dequantize_1_28bit(
+        const uint8_t* quantized,
+        size_t count,
+        float* output,
+        const QuantizationMeta* metadata,
+        uint32_t block_size = 0
+    );
+    
+    /**
+     * Legacy API: Dequantize with bool return
+     */
+    bool dequantize_1_28bit_legacy(
         const uint8_t* quantized,
         size_t count,
         float* output,
@@ -77,10 +129,23 @@ public:
      * @param count Number of weights
      * @param output Output quantized buffer (size: count * 1.58 / 8 bytes)
      * @param metadata Output quantization metadata (per block)
-     * @param block_size Block size for group quantization (default: 128)
-     * @return true on success
+     * @param block_size Block size for group quantization (0 = auto-detect)
+     * @param config Optional configuration (nullptr = use defaults)
+     * @return QuantizationError code
      */
-    bool quantize_1_58bit(
+    QuantizationError quantize_1_58bit(
+        const float* weights,
+        size_t count,
+        uint8_t* output,
+        QuantizationMeta* metadata,
+        uint32_t block_size = 0,
+        const QuantizationConfig* config = nullptr
+    );
+    
+    /**
+     * Legacy API: Quantize with bool return
+     */
+    bool quantize_1_58bit_legacy(
         const float* weights,
         size_t count,
         uint8_t* output,
@@ -90,8 +155,20 @@ public:
 
     /**
      * Dequantize 1.58-bit weights back to float
+     * @return QuantizationError code
      */
-    bool dequantize_1_58bit(
+    QuantizationError dequantize_1_58bit(
+        const uint8_t* quantized,
+        size_t count,
+        float* output,
+        const QuantizationMeta* metadata,
+        uint32_t block_size = 0
+    );
+    
+    /**
+     * Legacy API: Dequantize with bool return
+     */
+    bool dequantize_1_58bit_legacy(
         const uint8_t* quantized,
         size_t count,
         float* output,
@@ -111,8 +188,9 @@ public:
      * @param Y Output vector (M elements)
      * @param M Number of rows in A
      * @param K Number of columns in A
+     * @return QuantizationError code
      */
-    void matvec_mul_1_28bit(
+    QuantizationError matvec_mul_1_28bit(
         const uint8_t* quantized_A,
         const QuantizationMeta* metadata_A,
         const float* X,
@@ -123,8 +201,9 @@ public:
 
     /**
      * Matrix-vector multiplication with 1.58-bit quantized matrix
+     * @return QuantizationError code
      */
-    void matvec_mul_1_58bit(
+    QuantizationError matvec_mul_1_58bit(
         const uint8_t* quantized_A,
         const QuantizationMeta* metadata_A,
         const float* X,
@@ -157,6 +236,64 @@ public:
      * Enable/disable NEON optimizations (default: auto-detect)
      */
     void set_neon_enabled(bool enabled);
+    
+    /**
+     * Get hardware capabilities
+     */
+    const HardwareCapabilities& get_hardware_capabilities() const;
+    
+    /**
+     * Set hardware capabilities (for testing or manual configuration)
+     */
+    void set_hardware_capabilities(const HardwareCapabilities& caps);
+    
+    /**
+     * Validate input parameters
+     */
+    static QuantizationError validate_inputs(
+        const void* weights,
+        size_t count,
+        const void* output,
+        const void* metadata,
+        uint32_t block_size,
+        size_t output_buffer_size
+    );
+    
+    /**
+     * Quantize a matrix (M x K) to 1.28-bit format
+     * This is a convenience function that properly organizes metadata for matrix operations
+     * 
+     * @param weights Input matrix weights (row-major, M * K elements)
+     * @param M Number of rows
+     * @param K Number of columns
+     * @param output Output quantized buffer
+     * @param metadata Output metadata array (M * num_blocks_per_row elements)
+     * @param block_size Block size for quantization
+     * @param config Optional configuration
+     * @return QuantizationError code
+     */
+    QuantizationError quantize_matrix_1_28bit(
+        const float* weights,
+        size_t M,
+        size_t K,
+        uint8_t* output,
+        QuantizationMeta* metadata,
+        uint32_t block_size = 0,
+        const QuantizationConfig* config = nullptr
+    );
+    
+    /**
+     * Quantize a matrix (M x K) to 1.58-bit format
+     */
+    QuantizationError quantize_matrix_1_58bit(
+        const float* weights,
+        size_t M,
+        size_t K,
+        uint8_t* output,
+        QuantizationMeta* metadata,
+        uint32_t block_size = 0,
+        const QuantizationConfig* config = nullptr
+    );
 
     // ========== Legacy API (for compatibility) ==========
     

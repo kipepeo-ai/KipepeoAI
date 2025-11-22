@@ -3,12 +3,16 @@
 set(QUANTIZATION_SOURCES
     src/africa_quant.cpp
     src/quantization_utils.cpp
+    src/quantization_error.cpp
+    src/hardware_detection.cpp
 )
 
 set(QUANTIZATION_HEADERS
     include/kipepeo/quantization/africa_quant.h
     include/kipepeo/quantization/quantization_utils.h
     include/kipepeo/quantization/types.h
+    include/kipepeo/quantization/quantization_error.h
+    include/kipepeo/quantization/hardware_detection.h
 )
 
 # Create library
